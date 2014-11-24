@@ -39,14 +39,11 @@ void draw(){
       //dan dit stuk uit de array halen en toevoegen aan een array lijst
       //deze arraylijst is dan de linker midden of rechter sector van het beeld
       int[] tempLeftArr = java.util.Arrays.copyOfRange(depthValues,i,(i+213));
-      leftSector.add(tempLeftArr); 
-      
       int[] tempMiddleArr = java.util.Arrays.copyOfRange(depthValues,(i+213),i+(213+214));
-      middleSector.add(tempMiddleArr);
-      
-      int[] tempRightArr = java.util.Arrays.copyOfRange(depthValues,i+(213+214),i+(213+214+213));
+      int[] tempRightArr = java.util.Arrays.copyOfRange( depthValues,i+(213+214),i+(213+214+213));
       rightSector.add(tempRightArr);
-      
+      leftSector.add(tempLeftArr); 
+      middleSector.add(tempMiddleArr);
    
     //println("X-as lijn: "+yAxisPosition);
     //yAxisPosition++;
