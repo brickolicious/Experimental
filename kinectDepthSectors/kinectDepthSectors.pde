@@ -3,19 +3,24 @@ SimpleOpenNI kinect;
 
 void setup(){
   
-size(640,480);
+  //frameRate(1);  
+  //noLoop();
+  
+
 kinect = new SimpleOpenNI(this);
 kinect.enableDepth();
-kinect.enableRGB();
+//kinect.enableRGB();
+kinect.enableIR();
+size(kinect.depthWidth(),kinect.depthHeight());
 }
 
 void draw(){
   kinect.update();
   clear();
   //background(0);
-  image(kinect.depthImage(),0,0);
+  //image(kinect.depthImage(),0,0);
   //image(kinect.rgbImage(),0,0);
-  
+  image(kinect.irImage(),0,0);
   
   int[] depthValues = kinect.depthMap();
   //println("Array lengte: "+depthValues.length); /*=307200 =>640.480*/
@@ -39,20 +44,21 @@ void draw(){
       //de lijn gaan splitsen en voor links midden rechts totale breedte is 640px hoogte 480px
       //dan dit stuk uit de array halen en toevoegen aan een array lijst
       //deze arraylijst is dan de linker midden of rechter sector van het beeld
-      int[] tempLeftArr = java.util.Arrays.copyOfRange(depthValues,i,(i+213));
-      int[] tempMiddleArr = java.util.Arrays.copyOfRange(depthValues,(i+213),i+(213+214));
-      int[] tempRightArr = java.util.Arrays.copyOfRange( depthValues,i+(213+214),i+(213+214+213));
+      int[] tempLeftArr = java.util.Arrays.copyOfRange(depthValues,i,int(""+Math.floor(kinect.depthWidth()/3)));
+      int[] tempMiddleArr = java.util.Arrays.copyOfRange(depthValues,int(""+Math.floor(kinect.depthWidth()/3)),2*int(""+Math.floor(kinect.depthWidth()/3)));
+      int[] tempRightArr = java.util.Arrays.copyOfRange( depthValues,i+2*int(""+Math.floor(kinect.depthWidth()/3)),kinect.depthWidth());
       rightSector.add(tempRightArr);
       leftSector.add(tempLeftArr); 
       middleSector.add(tempMiddleArr);
-   
+   println(i);
     //println("X-as lijn: "+yAxisPosition);
     //yAxisPosition++;
   }
   
-  
+  println("Depthvalue length: "+depthValues.length);
+  //println("sector size: "+leftSector.size()+" value of last: "+leftSector.get(481));
   for(int i =0;i <= leftSector.size()-1;i++){
-  
+    
     if(i < 160){ 
       
       sector1.add(leftSector.get(i));
@@ -110,11 +116,11 @@ void draw(){
 
 
 
-  println("Distances per sector:\n"
+  /*println("Distances per sector:\n"
   +getAverageOfSector(sector1)+"  "+getAverageOfSector(sector2)+"  "+getAverageOfSector(sector3)+"\n"
   +getAverageOfSector(sector4)+"  "+getAverageOfSector(sector5)+"  "+getAverageOfSector(sector6)+"\n"
   +getAverageOfSector(sector7)+"  "+getAverageOfSector(sector8)+"  "+getAverageOfSector(sector9)+"\n"
-  );
+  );*/
 
   drawRectangles(
  calculateOpacityBasedOnDistance(getAverageOfSector(sector1)),
