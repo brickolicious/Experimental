@@ -1,7 +1,25 @@
-import SimpleOpenNI.*;
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import SimpleOpenNI.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class kinectDepthSectors extends PApplet {
+
+
 SimpleOpenNI kinect;
 
-void setup(){
+public void setup(){
   
 size(640,480);
 kinect = new SimpleOpenNI(this);
@@ -9,12 +27,11 @@ kinect.enableDepth();
 kinect.enableRGB();
 }
 
-void draw(){
+public void draw(){
   kinect.update();
-  clear();
   //background(0);
-  image(kinect.depthImage(),0,0);
-  //image(kinect.rgbImage(),0,0);
+  //image(kinect.depthImage(),0,0);
+  image(kinect.rgbImage(),0,0);
   
   
   int[] depthValues = kinect.depthMap();
@@ -117,7 +134,7 @@ void draw(){
   );
 
   drawRectangles(
- calculateOpacityBasedOnDistance(getAverageOfSector(sector1)),
+  calculateOpacityBasedOnDistance(getAverageOfSector(sector1)),
   calculateOpacityBasedOnDistance(getAverageOfSector(sector2)),
   calculateOpacityBasedOnDistance(getAverageOfSector(sector3)),
   calculateOpacityBasedOnDistance(getAverageOfSector(sector4)),
@@ -131,7 +148,7 @@ void draw(){
 
 
 
-void drawRectangles(
+public void drawRectangles(
               int opacity1,
               int opacity2,
               int opacity3,
@@ -144,7 +161,7 @@ void drawRectangles(
               ){
   
   
-  noStroke();
+  
   //1 2 3
   fill(255,0,0,opacity1);
   rect(0, 0, 213, 160);
@@ -178,14 +195,11 @@ void drawRectangles(
 
 }
 
-int calculateOpacityBasedOnDistance(int distance){
-  if(distance < 400) {
-    println("to close");
-  }
+public int calculateOpacityBasedOnDistance(int distance){
   
-  if(distance < 500){
+  if(distance < 1000){
     return 255;
-  }else if(distance >= 500 && distance < 1800){
+  }else if(distance >= 1000 && distance < 2500){
     return 125;
   }else{
     return 0;
@@ -196,16 +210,16 @@ int calculateOpacityBasedOnDistance(int distance){
 
 //gaat alle arrays in array lijst overlopen en alle waarden in iedere array optellen 
 //en dan de sommen optellen heel de boel delen door het aantal waardes
-int getAverageOfSector(ArrayList<int[]> sector){
+public int getAverageOfSector(ArrayList<int[]> sector){
 
   int sumOfSector =0;
   int minimum = 8000;
   for(int i=0;i<=sector.size()-1;i++){
   
     for(int j=0;j<=sector.get(0).length-1;j++){
-      if(sector.get(i)[j] < minimum && sector.get(i)[j] > 400) {
+      if(sector.get(i)[j] < minimum) {
         minimum = sector.get(i)[j];
-      } 
+      }
     }
   
   }
@@ -217,3 +231,12 @@ int getAverageOfSector(ArrayList<int[]> sector){
 
 
 
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "kinectDepthSectors" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
+}
